@@ -1,0 +1,207 @@
+{% load url from future %}
+{% load staticfiles %}
+{% load i18n %}
+{% load account %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="icon" src="/static/img/Tape_logo_2.png" type="image/x-icon">
+    <title> Tape </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap -->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-fluid-adj.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/bootstrap-responsive.min.css' %}" rel="stylesheet">
+
+  </head>
+
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '1561102380838977',
+        xfbml      : true,
+        version    : 'v2.2'
+      });
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "//connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+
+	<div class="container">
+          <div class="collapse nav-collapse collapse" id="bs-example-navbar-collapse-1">
+	    {% block content %}
+            {% if user.is_authenticated %}
+	    <ul class="nav navbar-nav pull-left"> <!--class="nav-brand"-->
+		<li class="navbar-text">
+		  <a href="/feed">
+		    <img src="/static/img/tape_logo_blank.png"/>
+		  </a>
+		</li>
+                <li class="navbar-text"><a href="/discover">Discover</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav pull-right">
+		<li class="navbar-text">
+	  	  <button type="button" class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#AddVideoModal">
+		    Tape
+		  </button>
+		</li>
+		<li class="navbar-text">
+		  <a href="/profile/{{ user.username }}">
+                  <img src="{{ request.user.profile.profile_image_url }}" width="15%" height="15%"/>
+		  Welcome, {{ user.username }}!
+		  </a>
+		</li>
+		<li class="navbar-text"><a href="/accounts/logout">Logout</a></li>
+	    </ul>
+	    
+	    {% else %}
+	    <ul class="nav">
+	      <li class="navbar-text">
+		<a href="#">
+                    <img src="/static/img/tape_logo_blank.png"/>
+                  </a>
+	      </li>
+	      <li class=navbar-text>
+		<a class="brand" href="#">Tape</a>
+	      </li>
+	    </ul>
+	    <ul class="nav navbar-nav pull-right">
+	      <li class="navbar-text">
+              {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+              {% include "socialaccount/snippets/login_extra.html" %}
+	      </li>
+	    </ul>
+            {% endif %}
+            {% endblock %}
+	  </div> <!-- end nav-collapse-->
+        </div>  <!-- end container-->
+      </div> <!-- end navbar-inner-->
+    </div> <!--end navbar-->
+
+          {% block body_block %}
+          {% endblock %}
+
+  <!--Add video Model here! -->
+  <!-- Modal -->
+  <div class="modal fade" id="AddVideoModal" tabindex="-1" role="dialog" aria-labelledby="AddVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	  <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="AddVideoModelLabel" align="middle">Add Video</h4>
+        </div>
+
+        <div class="modal-body">
+	  <form class="form-horizontal" method="post" enctype="multipart/form-data" id="AddVideo">
+              	
+	  {% csrf_token %}
+	  <input type="hidden" class="form-control" name="newcollection" id="newCollection" value="False" />
+	  <input type="hidden" class="form-control" name="collection_name" id="collectionName" value="" />
+
+	  <div class="form-control">
+	    <label for="selectCollection" class="col-sm-2 control-label">Collection Name</label>
+	    <div class="col-sm-10">
+	      <select id="selectCollection" style="display:block" onChange="OnSelectedIndexChange()">
+    	        <option value="Choose an Option" selected="selected">Choose a collection</option>
+	        {% for collection in thiscollections %}
+                <option value="{{ collection.name }}">{{collection.name}}</option>
+                {% endfor %}
+	        <option value=""> Create a new collection </option>
+	      </select>
+	    </div>
+	  </div>
+
+	  <p></p>
+	  <div class="form-group" id="newCollectionBlock" style="display: none">
+	    <label for="newCollectionName" class="col-sm-2 control-label">New Collection Name</label>
+	    <div class="col-sm-10">
+	      <input type="text" id="newCollectionName" placeholder="Enter a Collection Name">
+	    </div>
+	  </div>
+
+	  <p></p>
+	  <div class="form-group">
+	    <label for="videoUrl" class="col-sm-2 control-label">Video Url</label>
+	    <div class="col-sm-10">
+ 	      <input type="text" id="videoUrl" name="video_url" placeholder="Enter a Video Url"> 
+	    <div>
+	  </div>		  
+
+	  <p></p>
+	  <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+	      <textarea name="description" class="form-control" id="description"  rows="3" placeholder="Enter Video Description"></textarea>
+	    </div>
+	  </div>
+
+	  <p></p>
+	  <div class="form-group">
+	    <label for="inputAlert" class="col-sm-2 control-label"></label>
+	    <div class="col-sm-10">
+	       <p class="text-error" id="inputAlert"></p>
+	    </div>
+	  </div>
+
+	  <p></p>
+	  <p></p>
+	  <div align="middle">
+	    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary" name="vform" value="Tape" onclick="Add()"/>
+	  </div>		
+	  </form>
+	</div> <!-- madal-body -->
+      </div>
+    </div>
+  </div>
+
+  <!--<footer>
+    <div class="container">
+      <p>&copy; Tape 2015</p>
+    </div>
+  </footer>--> 
+    <!--<script>
+      $('#AddVideo').on('hidden.bs.modal', function(e){
+          $('#selectCollection').removeAttr('selected');
+	  $('#videoUrl').val("");
+	  $('#description').val("");
+      });
+      
+    </script>-->
+
+    <script src="{% static 'js/base.js' %}"></script> 
+    <script src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <script>
+      $('#AddVideo').on('hidden.bs.modal', function(e){
+	$(this)
+	  .find("input,textarea,select,text")
+          .val('')
+          .end()
+          .find("input[type=checkbox], input[type=radio]")
+          .prop("checked", "")
+          .end();
+      })
+    </script>
+
+  </body>
+  
+
+</html>

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block %}
+
+{% if request.user.is_authenticated %}
+
+<body>
+
+<div id="content" class="container">
+  <div class="row" style="padding-top:20px">
+
+    <ul class="list-group">
+    {% for video in followingvideos %}
+    <div class="span8">
+      <div class="thumbnail" align="right">
+	
+      <!--<p><a href="{{ video.video_url }}">{{ video.video_url }}</a></p> -->
+	<iframe 
+        frameborder="0"
+	width="100%"
+	height="450px"
+        src="{{ video.embed_url }}" allowfullscreen>
+     	</iframe>
+      </div>
+    </div>
+
+    <div class="span3">
+      <div class="thumbnail">
+        <a href="/profile/{{ video.user.username }}">
+	  <img src="{{ video.user.profile.profile_image_url }}" alt="Sample Image" align="left" style="margin:5px">
+        </a>
+	<div class="caption">
+	  <h5>from <a href="/collection/{{ video.collection.collection_url }}">{{video.collection.name}}</a></h5>
+          <h5>curated by <a href="/profile/{{ video.user.username }}">{{ video.user.username }}</a><h5>
+	  <hr>
+	  <h6>{{video.description}}</h6>
+	  <p>{{  video.date_time }} </p>
+        </div>
+       </div>
+    </div>
+        <!--width="6400px"
+        height="3900px" -->
+    {% endfor %}
+  </ul>
+
+  </div>
+</div>
+
+  <meta name="X-FRAME-OPTIONS" content=”ALLOW-FROM” />
+  <meta http-equiv="X-Frame-Options" content="deny"/>
+
+</body>
+{% else %}
+  <meta http-equiv="refresh" content="0; url=http://tapeit.tv:8004/" />
+{% endif %}
+
+{% endblock %}

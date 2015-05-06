@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block %}
+
+{% if request.user.is_authenticated %}
+  
+<body>
+  <div class="container">
+    <div class="row">
+
+      <div class="span8">
+	<ul class="list-group">
+	{% for video in videolist %}
+	  <div class="thumbnail">
+    	  <!--<div class="list-group-item">-->
+    	    <!--<p><a href="{{ video.video_url }}">{{ video.video_url }}</a></p>-->
+    	    <iframe 
+      	      frameborder="0"
+      	      width="100%"
+      	      height="450px"
+      	      src="{{ video.embed_url }}" allowfullscreen>
+    	    </iframe>
+	    <div class="caption">
+	      <h6>{{video.description}}</h6>
+              <p>{{  video.date_time }} </p>
+	    </div> <!-- end caption -->
+    	  </div>
+  	{% endfor %}
+      	</ul>
+      </div> <!--end span8-->
+
+      <div class="span4">
+        <div class="bs-docs-sidebar affix">
+   	  <h3> {{ thiscollection.name }} </h3>
+	  <h6>curated by 
+            <a href="/profile/{{ thiscollection.user.username }}">
+              {{thiscollection.user.username}}
+              <img src="{{ thiscollection.user.profile.profile_image_url }}" width="15%" height="15%" style="margin:5px"/>
+            </a>
+	  </h6>
+
+    	  <hr>
+   	  {% if displayfollow %}
+      	  <form method="post"> <!-- Follow button -->
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{ thiscollection.user.username }}" />
+            <input type="hidden" name="tofollowname" value="{{ thiscollection.name }}" />
+            <input class="btn btn-default" type="submit" name="form" value="follow" />
+      	  </form>
+    	  {% else %}
+    	  {% endif %}
+        </div> <!--affix-->
+      </div> <!--span4-->
+
+    </div> <!-- end row -->
+  </div> <!-- end container -->
+
+  <meta name="X-FRAME-OPTIONS" content=”ALLOW-FROM” />
+  <meta http-equiv="X-Frame-Options" content="deny"/>
+ 
+</body>
+{% else %}
+  <meta http-equiv="refresh" content="0; url=http://tapeit.tv:8004/" />
+{% endif %}
+
+{% endblock %}
+
+

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block %}
+
+{% if request.user.is_authenticated %}	
+<!--<div class="span9">-->
+<body>
+  <div class="well">
+
+  <!--<div class="panel panel-default">-->
+    <!--<div class="panel-heading">-->  
+    <h3> Discover </h3>  
+    <!--</div>-->
+  <!--<div class="panel-body">-->
+  <!--<div class="panel-body">-->
+
+    <div id="content">
+      <ul class="nav nav-tabs">
+    	<li role="presentation" class="active"><a href="#tape" data-toggle="tab">Tape Collections</a></li>
+    	<li role="presentation"><a href="#mine" data-toggle="tab">My Collections</a></li>
+	<li role="presentation"><a href="#friends" data-toggle="tab">Friends' Collections</a></li>
+    	<li role="presentation"><a href="#top" data-toggle="tab">Top Collections</a></li>
+      </ul>
+      
+      <div id="my-tab-content" class="tab-content">
+
+        <div class="tab-pane active" id="tape">
+	  <ul class="list-group">
+    	  {% for collection in recommendcuratedcollections %}
+   	    <p>
+    	      <a href="/collection/{{collection.user.username}}_{{collection.name}}" class="list-group-item">
+		{{ collection.name }}
+    	      </a>
+    
+    		<!--<iframe 
+      		width="100%" 
+      		height="100%"
+     		src="http://www.youtube.com/embed/XGSy3_Czz8k">
+    		</iframe>-->
+    
+    	      <form method="post"> <!-- Follow button -->
+      		{% csrf_token %}
+      		<input type="hidden" name="tofollowname" value="{{ collection.name }}" />
+      		<input type="submit" value="follow" />
+    	      </form>
+    	    </p>
+    	  {% endfor %}
+    	  </ul>
+	</div>
+
+	<div class="tab-pane" id="mine">
+          <ul class="list-group">
+          {% for collection in thiscollections %}
+            <p>
+              <a href="/collection/{{collection.user.username}}_{{collection.name}}" class="list-group-item">
+                {{ collection.name }}
+              </a>
+
+                <!--<iframe 
+                width="100%" 
+                height="100%"
+                src="http://www.youtube.com/embed/XGSy3_Czz8k">
+                </iframe>-->
+
+            </p>
+          {% endfor %}
+          </ul>
+        </div>
+
+	<div class="tab-pane" id="friends">
+	  <h5> Friend's recommended collections here! </h5>
+		
+	</div>
+
+	<div class="tab-pane" id="top">
+	  <h5> Coming soon! </h5>
+	</div>
+      </div> <!-- End tab-content -->
+    </div> <!-- End content div -->
+  </div> <!-- End well div -->
+
+  <script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $('#tabs').tab();
+    });
+  </script>    
+
+</body>
+{% else %}
+  <meta http-equiv="refresh" content="0; url=http://54.165.239.201:8004/" />
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block head_title %}{% trans "Hello" %}{% endblock %}
+
+{% block body_block%}
+
+	<!--<img src="{{ request.user.profile.profile_image_url }}"/>-->
+	
+
+{% if request.user.is_authenticated %}
+  <meta http-equiv="refresh" content="0; url=http://tapeit.tv:8004/discover/" />
+  <!--div class="hero-unit">
+    <h1>Test Tape! </h1>
+    <p>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/MBexD51drKk" frameborder="0" allowfullscreen></iframe>
+    </p>
+  </div>-->
+
+{% else %}
+<!--<style type="text/css">
+  body {
+  }   
+</style>-->
+<!--<body background = "/static/img/background2.jpg">-->
+<body>
+  <div id="bg">
+
+    <img src="/static/img/background2.jpg" alt="">
+  </div>
+  <style>
+    #bg {
+  	position: fixed; 
+  	top: -50%; 
+  	left: -50%; 
+  	width: 200%; 
+  	height: 200%;
+    }
+    #bg img {
+  	position: absolute; 
+  	top: 0; 
+  	left: 0; 
+  	right: 0; 
+  	bottom: 0; 
+  	margin: auto; 
+  	min-width: 50%;
+  	min-height: 50%;
+    }
+    h1 { 
+	color: #111; 	 
+	font-size: 60px; 
+	letter-spacing: -1px; 
+	line-height: 0.5; 
+	text-align: right;
+	margin-top: 50px;
+	margin-right: 50px;
+    }
+  </style>
+</body>
+<!-- index start here -->
+
+{% endif %}
+{% endblock %}
+
+

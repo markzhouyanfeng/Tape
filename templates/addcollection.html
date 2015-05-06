@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+	<a href="/accounts/logout/" class="pull-right">Logout</a>
+	
+	<img src="{{ request.user.profile.profile_image_url }}"/>
+	
+	{% if request.user.first_name or request.user.last_name %}
+		{{ request.user.first_name }} {{ request.user.last_name }}
+	{% else %}
+		<p>{{ request.user.username }}</p>
+	{% endif %}
+	
+	<form action="/addcollection/" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<p>{{ form.non_field_errors }}</p>
+	<p>
+		{{ form.name.help_text }}
+		{{ form.name.errors }}
+		{{ form.name }}
+	</p>
+	<p><input type="submit" value="Add" /></p>
+	</form>
+ 
+{% else %}
+    <a href="/accounts/login/" class="pull-right">Login</a>
+{% endif %}
+
+{% endblock %}

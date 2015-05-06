@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block%}
+
+{% if request.user.is_authenticated %}
+	<p>
+	{% for collection in thiscollections %}
+		{{ collection.name }}
+	{% endfor %}
+	</p>
+	<form action="/addvideo/" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<p>{{ form.non_field_errors }}</p>
+	<p>
+		{{ form.collection_name.help_text }}
+		{{ form.collection_name.errors }}
+		{{ form.collection_name }}
+	</p>
+	<p>
+		{{ form.video_url.help_text }}
+		{{ form.video_url.errors }}
+		{{ form.video_url }}
+	</p>
+	<p><input type="submit" value="Add" /></p>
+	</form>
+	
+	
+ 
+{% else %}
+    <a href="/accounts/login/" class="pull-right">Login</a>
+{% endif %}
+
+{% endblock %}

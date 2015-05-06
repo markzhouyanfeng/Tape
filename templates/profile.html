@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block %}
+
+{% if request.user.is_authenticated %}
+<!--<div class="span9">-->
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<body>
+<div class="container">
+  <div class="row" style="padding-top:20px">
+    <div class="span4" >
+      <!--<div class="nav nav-list bs-docs-sidebar affix">-->
+      <ul class="nav nav-list bs-docs-sidenav affix">
+        <li><img src="{{thatprofile.profile_image_url}}" align="middle"/></li>
+      	<li><p>{{thatprofile.user.username}}</p></li>
+        <li class="active"><a href="#mine" data-toggle="tab">Collections</a></li>
+        <li><a href="#following" data-toggle="tab">Following</a></li>
+      </ul>
+    </div>
+  
+    <div class="span8">
+      <div id="my-tab-content" class="tab-content">
+        <div class="tab-pane active" id="mine">
+          <div class="row">
+          {% for collection in thatcollections %}
+	    <div class="span2">
+	      <div class="thumbnail">
+                <a href="/collection/{{ collection.collection_url }}"><img src="{{ collection.cover_image_url }}" alt="Sample Image"></a>
+		<div class="caption">
+		  <h4><a href="/collection/{{ collection.collection_url }}">{{ collection.name }}</a><h4>
+            	</div>
+	      </div>
+	    </div>
+          {% endfor %}
+          </div>
+	</div> <!--mine-->
+
+	<div class="tab-pane" id="following">
+	  <div class="row">
+          {% for collection in followingcollections %}
+            <div class="span2">
+              <div class="thumbnail">
+                <a href="/collection/{{ collection.collection_url }}"><img src="{{ collection.cover_image_url }}" alt="Sample Image"></a>
+                <div class="caption">
+                  <h4><a href="/collection/{{ collection.collection_url }}">{{ collection.name }}</a><h4>
+		  <h6>curated by 
+		    <a href="/profile/{{ collection.user.username }}">{{collection.user.username}}</a>
+		    <img src="{{ collection.user.profile.profile_image_url }}" width="15%" height="15%"/>
+		  </h6>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div> <!--following-->
+
+      </div> <!-- End tab-content -->
+    </div> <!-- End span8 div -->
+  </div> <!-- row -->
+</div> <!-- container -->
+</body>
+{% else %}
+  <meta http-equiv="refresh" content="0; url=http://tapeit.tv:8004/" />
+{% endif %}
+
+{% endblock %}

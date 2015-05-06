@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_block %}
+
+{% if request.user.is_authenticated %}	
+<!--<div class="span9">-->
+<body>
+<div class="container">
+
+    <h3> Discover </h3>  
+    <div id="content">
+      <ul class="nav nav-tabs">
+	<li class="active"><a href="#friends" data-toggle="tab">Friends' Collections</a></li>
+    	<li><a href="#tape" data-toggle="tab">Featured</a></li>
+      </ul>
+
+      <!--script>
+        var hash = document.location.hash;
+        var prefix = "tab_";
+        if (hash) {
+          $('.nav-tabs a[href='+hash.replace(prefix,"")+']').tab('show');
+        } 
+
+        // Change hash for page-reload
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+          window.location.hash = e.target.hash.replace("#", "#" + prefix);
+        });
+
+      </script>-->
+</div>
+
+      
+      <div id="my-tab-content" class="tab-content">
+        <div class="tab-pane" id="tape">
+
+	  <div class="row">
+          {% for collection in recommendcuratedcollections %}
+            <div class="span4">
+              <div class="thumbnail">
+                <img src="{{ collection.cover_image_url }}" alt="Sample Image">
+                <div class="caption">
+		  <div>
+                    <h4><a href="/collection/{{ collection.collection_url }}">{{ collection.name }}</a><h4>
+
+		  <form method="post"> <!-- Follow button -->
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ collection.user.username }}" />
+                    <input type="hidden" name="tofollowname" value="{{ collection.name }}" />
+                    <input type="submit" name="fform" value="follow" align="right"/>
+              	  </form>
+		  </div>
+
+		  <div>
+                    <h6>curated by 
+                      <a href="/profile/{{ collection.user.username }}">{{collection.user.username}}</a>
+                      <img src="{{ collection.user.profile.profile_image_url }}" width="15%" height="15%"/>
+		    </h6>
+		  <div>
+
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+	</div>
+
+	<div class="tab-pane active" id="friends">
+	  <!--<h5> Friend's recommended collections here! </h5> -->
+	  <div class="row">
+	  {% for collection in friendscollections %}
+	    <div class="span4">
+              <div class="thumbnail">
+		<iframe 
+        	  frameborder="0"
+	          width="100%"
+		  height="300px"
+	          src="{{ collection.cover_video_embed_url }}" allowfullscreen>
+        	</iframe> 
+                <!--<img src="{{ collection.cover_image_url }}" alt="Sample Image">-->
+                <div class="caption">
+		  <p class="row">
+                  <form method="post"> <!-- Follow button -->
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ collection.user.username }}" />
+                    <input type="hidden" name="tofollowname" value="{{ collection.name }}" />
+		    <h4><a href="/collection/{{ collection.collection_url }}">{{ collection.name }}</a>
+                    <input type="submit" class="btn btn-default" name="fform" value="follow" align="right"/></h4>
+                  </form>
+		  </p>
+
+                  <h6>curated by 
+                    <a href="/profile/{{ collection.user.username }}">
+		      {{collection.user.username}}
+                      <img src="{{ collection.user.profile.profile_image_url }}" width="8%" height="8%" style="margin:5px"/>
+		    </a>
+                  </h6>
+                </div>
+              </div>
+            </div>
+	  {% endfor %}
+	  </div>
+	</div>
+
+      </div> <!-- End tab-content -->
+    </div> <!-- End content div -->
+  </div> <!-- End well div -->
+</div>
+</body>
+{% else %}
+  <meta http-equiv="refresh" content="0; url=http://tapeit.tv:8004/" />
+{% endif %}
+
+{% endblock %}
